@@ -1,38 +1,60 @@
+using System.Text.Json;
+
+using Carter;
+
+using FluentValidation;
+
+using Microsoft.EntityFrameworkCore;
+
+using Todo.Api.Infrastructure.IAM;
+using Todo.Api.Infrastructure.OpenApi;
+using Todo.Api.Infrastructure.Persistence;
+using Todo.Api.SharedKernel.Extensions;
+using Todo.Api.SharedKernel.Models;
+
 WebApplicationBuilder builder = WebApplication.CreateBuilder(args);
 
-builder.Services.AddOpenApi();
+builder.AddServiceDefaults();
+builder.AddApplicationPersistence();
+builder.AddApplicationIdentity();
+builder.AddApplicationAuthentication();
+builder.Services.AddAuthorizationBuilder();
 
-var app = builder.Build();
+builder.Services.AddCarter();
+
+builder.Services.AddValidatorsFromAssemblyContaining<
+    Todo.Api.Features.Todos.TodoLists.CreateTodoList.Validator>();
+
+builder.Services.AddEndpointsApiExplorer();
+builder.Services.ConfigureHttpJsonOptions(
+    options =>
+    {
+        options.SerializerOptions.PropertyNamingPolicy = JsonNamingPolicy.CamelCase;
+        options.SerializerOptions.DictionaryKeyPolicy = JsonNamingPolicy.CamelCase;
+        options.SerializerOptions.PropertyNameCaseInsensitive = true;
+        options.SerializerOptions.Converters.Add(new ResultConverterFactory());
+    });
+
+builder.Services.AddOpenApi(options =>
+    options.ConfigureCustomOptions());
+
+WebApplication app = builder.Build();
 
 if (app.Environment.IsDevelopment())
 {
-    app.MapOpenApi();
+    app.UseOpenApiDocumentation();
+
+    using IServiceScope scope = app.Services.CreateScope();
+    ApplicationDbContext dbContext = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
+    await dbContext.Database.MigrateAsync();
 }
 
 app.UseHttpsRedirection();
 
-var summaries = new[]
-{
-    "Freezing", "Bracing", "Chilly", "Cool", "Mild", "Warm", "Balmy", "Hot", "Sweltering", "Scorching"
-};
+app.UseAuthentication();
+app.UseAuthorization();
 
-app.MapGet("/weatherforecast", () =>
-{
-    var forecast = Enumerable.Range(1, 5).Select(index =>
-        new WeatherForecast
-        (
-            DateOnly.FromDateTime(DateTime.Now.AddDays(index)),
-            Random.Shared.Next(-20, 55),
-            summaries[Random.Shared.Next(summaries.Length)]
-        ))
-        .ToArray();
-    return forecast;
-})
-.WithName("GetWeatherForecast");
+app.MapDefaultEndpoints();
+app.MapCarter();
 
 app.Run();
-
-record WeatherForecast(DateOnly Date, int TemperatureC, string? Summary)
-{
-    public int TemperatureF => 32 + (int)(TemperatureC / 0.5556);
-}
