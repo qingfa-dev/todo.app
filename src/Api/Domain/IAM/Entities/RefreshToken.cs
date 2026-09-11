@@ -1,0 +1,17 @@
+using Todo.Api.Domain.Common;
+
+namespace Todo.Api.Domain.IAM.Entities;
+
+public class RefreshToken : BaseEntity
+{
+    public Guid UserId { get; set; }
+    public string TokenHash { get; set; } = null!; 
+    public DateTime ExpiresAtUtc { get; set; }
+    public DateTime? RevokedAtUtc { get; set; }
+    public DateTime CreatedAtUtc { get; set; }
+    public string? ReplacedByTokenHash { get; set; }
+    public bool IsExpired => DateTime.UtcNow >= ExpiresAtUtc;
+    public bool IsRevoked => RevokedAtUtc.HasValue;
+    public bool IsActive => !IsExpired && !IsRevoked;
+    public ApplicationUser User { get; set; } = null!;
+}
