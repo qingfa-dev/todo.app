@@ -65,3 +65,7 @@ todo.app/
 
 - **CI:** Tests run on push/PR to main (GitHub Actions)
 - **CD:** Docker images built and pushed to GHCR on main
+
+## Roadmap.sh Project
+This project was built as part of the Roadmap.sh Todo List API project:
+https://roadmap.sh/projects/todo-list-api
