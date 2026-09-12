@@ -1,0 +1,14 @@
+**/.git
+**/.vs
+**/.vscode
+**/bin
+**/obj
+**/node_modules
+**/dist
+**/.nuxt
+**/.output
+**/test-results
+**/TestResults
+**/coverage
+**/*.user
+**/node_modules
