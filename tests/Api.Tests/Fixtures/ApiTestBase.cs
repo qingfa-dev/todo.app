@@ -25,7 +25,7 @@ public abstract class ApiTestBase : IAsyncLifetime
     {
         Client = _factory.CreateClient();
 
-        var scope = _factory.Services.CreateScope();
+        IServiceScope scope = _factory.Services.CreateScope();
         _scope = scope;
 
         RawDbContext = scope.ServiceProvider

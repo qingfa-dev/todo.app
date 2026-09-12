@@ -36,7 +36,7 @@ public sealed class ApiFactory : WebApplicationFactory<Program>, IAsyncLifetime
 
         builder.ConfigureServices(services =>
         {
-            var dbDescriptor = services.SingleOrDefault(
+            ServiceDescriptor? dbDescriptor = services.SingleOrDefault(
                 d => d.ServiceType ==
                      typeof(DbContextOptions<ApplicationDbContext>));
 
@@ -69,7 +69,7 @@ internal sealed class TestAuthHandler(
 {
     protected override Task<AuthenticateResult> HandleAuthenticateAsync()
     {
-        var claims = new[]
+        Claim[] claims = new[]
         {
             new Claim(ClaimTypes.Name, "test-user"),
             new Claim(ClaimTypes.NameIdentifier, Guid.NewGuid().ToString())

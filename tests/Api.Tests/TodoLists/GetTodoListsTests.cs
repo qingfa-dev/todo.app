@@ -25,11 +25,11 @@ public sealed class GetTodoListsTests : ApiTestBase
     [Fact]
     public async Task GetTodoLists_WhenNoData_ShouldReturnEmptyPagedResult()
     {
-        var response = await Client.GetAsync("/api/todo-lists");
+        HttpResponseMessage response = await Client.GetAsync("/api/todo-lists");
 
         response.StatusCode.ShouldBe(HttpStatusCode.OK);
 
-        var content = await response.Content.ReadFromJsonAsync<JsonElement>(JsonOptions);
+        JsonElement content = await response.Content.ReadFromJsonAsync<JsonElement>(JsonOptions);
         content.GetProperty("items").GetArrayLength().ShouldBe(0);
         content.GetProperty("totalCount").GetInt32().ShouldBe(0);
         content.GetProperty("page").GetInt32().ShouldBe(1);
@@ -48,11 +48,11 @@ public sealed class GetTodoListsTests : ApiTestBase
             });
         }
 
-        var response = await Client.GetAsync("/api/todo-lists");
+        HttpResponseMessage response = await Client.GetAsync("/api/todo-lists");
 
         response.StatusCode.ShouldBe(HttpStatusCode.OK);
 
-        var content = await response.Content.ReadFromJsonAsync<JsonElement>(JsonOptions);
+        JsonElement content = await response.Content.ReadFromJsonAsync<JsonElement>(JsonOptions);
         content.GetProperty("items").GetArrayLength().ShouldBe(5);
         content.GetProperty("totalCount").GetInt32().ShouldBe(5);
     }
@@ -69,11 +69,11 @@ public sealed class GetTodoListsTests : ApiTestBase
             });
         }
 
-        var response = await Client.GetAsync("/api/todo-lists?page=2&pageSize=3");
+        HttpResponseMessage response = await Client.GetAsync("/api/todo-lists?page=2&pageSize=3");
 
         response.StatusCode.ShouldBe(HttpStatusCode.OK);
 
-        var content = await response.Content.ReadFromJsonAsync<JsonElement>(JsonOptions);
+        JsonElement content = await response.Content.ReadFromJsonAsync<JsonElement>(JsonOptions);
         content.GetProperty("items").GetArrayLength().ShouldBe(3);
         content.GetProperty("page").GetInt32().ShouldBe(2);
         content.GetProperty("pageSize").GetInt32().ShouldBe(3);
@@ -101,12 +101,12 @@ public sealed class GetTodoListsTests : ApiTestBase
             Colour = Colour.Grey
         });
 
-        var response = await Client.GetAsync("/api/todo-lists?sortBy=title&sortDirection=0");
+        HttpResponseMessage response = await Client.GetAsync("/api/todo-lists?sortBy=title&sortDirection=0");
 
         response.StatusCode.ShouldBe(HttpStatusCode.OK);
 
-        var content = await response.Content.ReadFromJsonAsync<JsonElement>(JsonOptions);
-        var items = content.GetProperty("items");
+        JsonElement content = await response.Content.ReadFromJsonAsync<JsonElement>(JsonOptions);
+        JsonElement items = content.GetProperty("items");
         items.GetArrayLength().ShouldBe(3);
         items[0].GetProperty("title").GetString().ShouldBe("Apple List");
         items[1].GetProperty("title").GetString().ShouldBe("Banana List");
@@ -134,12 +134,12 @@ public sealed class GetTodoListsTests : ApiTestBase
             Colour = Colour.Grey
         });
 
-        var response = await Client.GetAsync("/api/todo-lists?sortBy=title&sortDirection=1");
+        HttpResponseMessage response = await Client.GetAsync("/api/todo-lists?sortBy=title&sortDirection=1");
 
         response.StatusCode.ShouldBe(HttpStatusCode.OK);
 
-        var content = await response.Content.ReadFromJsonAsync<JsonElement>(JsonOptions);
-        var items = content.GetProperty("items");
+        JsonElement content = await response.Content.ReadFromJsonAsync<JsonElement>(JsonOptions);
+        JsonElement items = content.GetProperty("items");
         items[0].GetProperty("title").GetString().ShouldBe("Cherry List");
         items[1].GetProperty("title").GetString().ShouldBe("Banana List");
         items[2].GetProperty("title").GetString().ShouldBe("Apple List");
@@ -166,12 +166,12 @@ public sealed class GetTodoListsTests : ApiTestBase
             Colour = Colour.Red
         });
 
-        var response = await Client.GetAsync("/api/todo-lists?sortBy=colour&sortDirection=0");
+        HttpResponseMessage response = await Client.GetAsync("/api/todo-lists?sortBy=colour&sortDirection=0");
 
         response.StatusCode.ShouldBe(HttpStatusCode.OK);
 
-        var content = await response.Content.ReadFromJsonAsync<JsonElement>(JsonOptions);
-        var items = content.GetProperty("items");
+        JsonElement content = await response.Content.ReadFromJsonAsync<JsonElement>(JsonOptions);
+        JsonElement items = content.GetProperty("items");
         items.GetArrayLength().ShouldBe(3);
         items[0].GetProperty("colour").GetString().ShouldBe("#5C6BC0");
         items[1].GetProperty("colour").GetString().ShouldBe("#78909C");
@@ -199,11 +199,11 @@ public sealed class GetTodoListsTests : ApiTestBase
             Colour = Colour.Green
         });
 
-        var response = await Client.GetAsync("/api/todo-lists?search=shopping");
+        HttpResponseMessage response = await Client.GetAsync("/api/todo-lists?search=shopping");
 
         response.StatusCode.ShouldBe(HttpStatusCode.OK);
 
-        var content = await response.Content.ReadFromJsonAsync<JsonElement>(JsonOptions);
+        JsonElement content = await response.Content.ReadFromJsonAsync<JsonElement>(JsonOptions);
         content.GetProperty("items").GetArrayLength().ShouldBe(2);
     }
 
@@ -222,11 +222,11 @@ public sealed class GetTodoListsTests : ApiTestBase
             Colour = Colour.Blue
         });
 
-        var response = await Client.GetAsync("/api/todo-lists?title=groceries");
+        HttpResponseMessage response = await Client.GetAsync("/api/todo-lists?title=groceries");
 
         response.StatusCode.ShouldBe(HttpStatusCode.OK);
 
-        var content = await response.Content.ReadFromJsonAsync<JsonElement>(JsonOptions);
+        JsonElement content = await response.Content.ReadFromJsonAsync<JsonElement>(JsonOptions);
         content.GetProperty("items").GetArrayLength().ShouldBe(1);
         content.GetProperty("items")[0].GetProperty("title").GetString().ShouldBe("Groceries");
     }
@@ -246,11 +246,11 @@ public sealed class GetTodoListsTests : ApiTestBase
             Colour = Colour.Red
         });
 
-        var response = await Client.GetAsync("/api/todo-lists?colour=%235C6BC0");
+        HttpResponseMessage response = await Client.GetAsync("/api/todo-lists?colour=%235C6BC0");
 
         response.StatusCode.ShouldBe(HttpStatusCode.OK);
 
-        var content = await response.Content.ReadFromJsonAsync<JsonElement>(JsonOptions);
+        JsonElement content = await response.Content.ReadFromJsonAsync<JsonElement>(JsonOptions);
         content.GetProperty("items").GetArrayLength().ShouldBe(1);
         content.GetProperty("items")[0].GetProperty("title").GetString().ShouldBe("Blue List");
     }
@@ -258,7 +258,7 @@ public sealed class GetTodoListsTests : ApiTestBase
     [Fact]
     public async Task GetTodoLists_WithInvalidPage_ShouldReturnValidationError()
     {
-        var response = await Client.GetAsync("/api/todo-lists?page=0");
+        HttpResponseMessage response = await Client.GetAsync("/api/todo-lists?page=0");
 
         response.StatusCode.ShouldBe(HttpStatusCode.BadRequest);
     }
@@ -266,7 +266,7 @@ public sealed class GetTodoListsTests : ApiTestBase
     [Fact]
     public async Task GetTodoLists_WithInvalidSortField_ShouldReturnValidationError()
     {
-        var response = await Client.GetAsync("/api/todo-lists?sortBy=invalidfield");
+        HttpResponseMessage response = await Client.GetAsync("/api/todo-lists?sortBy=invalidfield");
 
         response.StatusCode.ShouldBe(HttpStatusCode.BadRequest);
     }
@@ -283,11 +283,11 @@ public sealed class GetTodoListsTests : ApiTestBase
             });
         }
 
-        var response = await Client.GetAsync("/api/todo-lists?page=1&pageSize=10");
+        HttpResponseMessage response = await Client.GetAsync("/api/todo-lists?page=1&pageSize=10");
 
         response.StatusCode.ShouldBe(HttpStatusCode.OK);
 
-        var content = await response.Content.ReadFromJsonAsync<JsonElement>(JsonOptions);
+        JsonElement content = await response.Content.ReadFromJsonAsync<JsonElement>(JsonOptions);
         content.GetProperty("totalCount").GetInt32().ShouldBe(25);
         content.GetProperty("totalPages").GetInt32().ShouldBe(3);
         content.GetProperty("hasPreviousPage").GetBoolean().ShouldBeFalse();
@@ -297,7 +297,7 @@ public sealed class GetTodoListsTests : ApiTestBase
     [Fact]
     public async Task GetTodoLists_WithInvalidColour_ShouldReturnValidationError()
     {
-        var response = await Client.GetAsync("/api/todo-lists?colour=%23ZZZZZZ");
+        HttpResponseMessage response = await Client.GetAsync("/api/todo-lists?colour=%23ZZZZZZ");
 
         response.StatusCode.ShouldBe(HttpStatusCode.BadRequest);
     }

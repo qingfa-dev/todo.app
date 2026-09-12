@@ -26,11 +26,11 @@ public sealed class GetTodoItemsTests : ApiTestBase
     [Fact]
     public async Task GetTodoItems_WhenNoData_ShouldReturnEmptyPagedResult()
     {
-        var response = await Client.GetAsync("/api/todo-items");
+        HttpResponseMessage response = await Client.GetAsync("/api/todo-items");
 
         response.StatusCode.ShouldBe(HttpStatusCode.OK);
 
-        var content = await response.Content.ReadFromJsonAsync<JsonElement>(JsonOptions);
+        JsonElement content = await response.Content.ReadFromJsonAsync<JsonElement>(JsonOptions);
         content.GetProperty("items").GetArrayLength().ShouldBe(0);
         content.GetProperty("totalCount").GetInt32().ShouldBe(0);
         content.GetProperty("page").GetInt32().ShouldBe(1);
@@ -59,11 +59,11 @@ public sealed class GetTodoItemsTests : ApiTestBase
             });
         }
 
-        var response = await Client.GetAsync("/api/todo-items");
+        HttpResponseMessage response = await Client.GetAsync("/api/todo-items");
 
         response.StatusCode.ShouldBe(HttpStatusCode.OK);
 
-        var content = await response.Content.ReadFromJsonAsync<JsonElement>(JsonOptions);
+        JsonElement content = await response.Content.ReadFromJsonAsync<JsonElement>(JsonOptions);
         content.GetProperty("items").GetArrayLength().ShouldBe(5);
         content.GetProperty("totalCount").GetInt32().ShouldBe(5);
     }
@@ -90,11 +90,11 @@ public sealed class GetTodoItemsTests : ApiTestBase
             });
         }
 
-        var response = await Client.GetAsync("/api/todo-items?page=2&pageSize=3");
+        HttpResponseMessage response = await Client.GetAsync("/api/todo-items?page=2&pageSize=3");
 
         response.StatusCode.ShouldBe(HttpStatusCode.OK);
 
-        var content = await response.Content.ReadFromJsonAsync<JsonElement>(JsonOptions);
+        JsonElement content = await response.Content.ReadFromJsonAsync<JsonElement>(JsonOptions);
         content.GetProperty("items").GetArrayLength().ShouldBe(3);
         content.GetProperty("page").GetInt32().ShouldBe(2);
         content.GetProperty("pageSize").GetInt32().ShouldBe(3);
@@ -136,12 +136,12 @@ public sealed class GetTodoItemsTests : ApiTestBase
             Done = false
         });
 
-        var response = await Client.GetAsync("/api/todo-items?sortBy=title&sortDirection=0");
+        HttpResponseMessage response = await Client.GetAsync("/api/todo-items?sortBy=title&sortDirection=0");
 
         response.StatusCode.ShouldBe(HttpStatusCode.OK);
 
-        var content = await response.Content.ReadFromJsonAsync<JsonElement>(JsonOptions);
-        var items = content.GetProperty("items");
+        JsonElement content = await response.Content.ReadFromJsonAsync<JsonElement>(JsonOptions);
+        JsonElement items = content.GetProperty("items");
         items.GetArrayLength().ShouldBe(3);
         items[0].GetProperty("title").GetString().ShouldBe("Apple");
         items[1].GetProperty("title").GetString().ShouldBe("Banana");
@@ -183,12 +183,12 @@ public sealed class GetTodoItemsTests : ApiTestBase
             Done = false
         });
 
-        var response = await Client.GetAsync("/api/todo-items?sortBy=title&sortDirection=1");
+        HttpResponseMessage response = await Client.GetAsync("/api/todo-items?sortBy=title&sortDirection=1");
 
         response.StatusCode.ShouldBe(HttpStatusCode.OK);
 
-        var content = await response.Content.ReadFromJsonAsync<JsonElement>(JsonOptions);
-        var items = content.GetProperty("items");
+        JsonElement content = await response.Content.ReadFromJsonAsync<JsonElement>(JsonOptions);
+        JsonElement items = content.GetProperty("items");
         items[0].GetProperty("title").GetString().ShouldBe("Cherry");
         items[1].GetProperty("title").GetString().ShouldBe("Banana");
         items[2].GetProperty("title").GetString().ShouldBe("Apple");
@@ -229,11 +229,11 @@ public sealed class GetTodoItemsTests : ApiTestBase
             Done = false
         });
 
-        var response = await Client.GetAsync("/api/todo-items?priority=3");
+        HttpResponseMessage response = await Client.GetAsync("/api/todo-items?priority=3");
 
         response.StatusCode.ShouldBe(HttpStatusCode.OK);
 
-        var content = await response.Content.ReadFromJsonAsync<JsonElement>(JsonOptions);
+        JsonElement content = await response.Content.ReadFromJsonAsync<JsonElement>(JsonOptions);
         content.GetProperty("items").GetArrayLength().ShouldBe(2);
         content.GetProperty("totalCount").GetInt32().ShouldBe(2);
     }
@@ -265,11 +265,11 @@ public sealed class GetTodoItemsTests : ApiTestBase
             Done = false
         });
 
-        var response = await Client.GetAsync("/api/todo-items?done=true");
+        HttpResponseMessage response = await Client.GetAsync("/api/todo-items?done=true");
 
         response.StatusCode.ShouldBe(HttpStatusCode.OK);
 
-        var content = await response.Content.ReadFromJsonAsync<JsonElement>(JsonOptions);
+        JsonElement content = await response.Content.ReadFromJsonAsync<JsonElement>(JsonOptions);
         content.GetProperty("items").GetArrayLength().ShouldBe(1);
         content.GetProperty("items")[0].GetProperty("title").GetString().ShouldBe("Done Item");
     }
@@ -310,11 +310,11 @@ public sealed class GetTodoItemsTests : ApiTestBase
             Done = false
         });
 
-        var response = await Client.GetAsync($"/api/todo-items?listId={listId1}");
+        HttpResponseMessage response = await Client.GetAsync($"/api/todo-items?listId={listId1}");
 
         response.StatusCode.ShouldBe(HttpStatusCode.OK);
 
-        var content = await response.Content.ReadFromJsonAsync<JsonElement>(JsonOptions);
+        JsonElement content = await response.Content.ReadFromJsonAsync<JsonElement>(JsonOptions);
         content.GetProperty("items").GetArrayLength().ShouldBe(1);
         content.GetProperty("items")[0].GetProperty("title").GetString().ShouldBe("Item in List 1");
     }
@@ -348,11 +348,11 @@ public sealed class GetTodoItemsTests : ApiTestBase
             Done = false
         });
 
-        var response = await Client.GetAsync("/api/todo-items?search=groceries");
+        HttpResponseMessage response = await Client.GetAsync("/api/todo-items?search=groceries");
 
         response.StatusCode.ShouldBe(HttpStatusCode.OK);
 
-        var content = await response.Content.ReadFromJsonAsync<JsonElement>(JsonOptions);
+        JsonElement content = await response.Content.ReadFromJsonAsync<JsonElement>(JsonOptions);
         content.GetProperty("items").GetArrayLength().ShouldBe(1);
         content.GetProperty("items")[0].GetProperty("title").GetString().ShouldBe("Buy groceries");
     }
@@ -360,7 +360,7 @@ public sealed class GetTodoItemsTests : ApiTestBase
     [Fact]
     public async Task GetTodoItems_WithInvalidPage_ShouldReturnValidationError()
     {
-        var response = await Client.GetAsync("/api/todo-items?page=0");
+        HttpResponseMessage response = await Client.GetAsync("/api/todo-items?page=0");
 
         response.StatusCode.ShouldBe(HttpStatusCode.BadRequest);
     }
@@ -368,7 +368,7 @@ public sealed class GetTodoItemsTests : ApiTestBase
     [Fact]
     public async Task GetTodoItems_WithInvalidSortField_ShouldReturnValidationError()
     {
-        var response = await Client.GetAsync("/api/todo-items?sortBy=invalidfield");
+        HttpResponseMessage response = await Client.GetAsync("/api/todo-items?sortBy=invalidfield");
 
         response.StatusCode.ShouldBe(HttpStatusCode.BadRequest);
     }
@@ -395,11 +395,11 @@ public sealed class GetTodoItemsTests : ApiTestBase
             });
         }
 
-        var response = await Client.GetAsync("/api/todo-items?page=1&pageSize=10");
+        HttpResponseMessage response = await Client.GetAsync("/api/todo-items?page=1&pageSize=10");
 
         response.StatusCode.ShouldBe(HttpStatusCode.OK);
 
-        var content = await response.Content.ReadFromJsonAsync<JsonElement>(JsonOptions);
+        JsonElement content = await response.Content.ReadFromJsonAsync<JsonElement>(JsonOptions);
         content.GetProperty("totalCount").GetInt32().ShouldBe(25);
         content.GetProperty("totalPages").GetInt32().ShouldBe(3);
         content.GetProperty("hasPreviousPage").GetBoolean().ShouldBeFalse();
