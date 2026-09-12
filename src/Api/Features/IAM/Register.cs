@@ -1,4 +1,5 @@
 using FluentValidation;
+using FluentValidation.Results;
 
 using Microsoft.AspNetCore.Identity;
 
@@ -37,7 +38,7 @@ public static class Register
             IValidator<Request> validator,
             CancellationToken cancellationToken)
         {
-            var validationResult =
+            ValidationResult validationResult =
                 await validator.ValidateAsync(
                     request,
                     cancellationToken);
@@ -50,7 +51,7 @@ public static class Register
                         .ToArray());
             }
 
-            var existingUser =
+            ApplicationUser? existingUser =
                 await userManager.FindByEmailAsync(
                     request.Email);
 
@@ -68,19 +69,19 @@ public static class Register
                 UserName = request.Email.Trim()
             };
 
-            var identityResult =
+            IdentityResult identityResult =
                 await userManager.CreateAsync(
                     user,
                     request.Password);
 
             if (!identityResult.Succeeded)
             {
-                var errors =
+                Error[] errors =
                     identityResult.ToErrors();
                 return errors;
             }
 
-            var response =
+            Response response =
                 IdentityMapper.ToRegisterResponse<Response>(user);
 
             return response;

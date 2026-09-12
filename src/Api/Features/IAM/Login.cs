@@ -1,4 +1,5 @@
 using FluentValidation;
+using FluentValidation.Results;
 
 using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Options;
@@ -48,7 +49,7 @@ public static class Login
             IValidator<Request> validator,
             CancellationToken cancellationToken)
         {
-            var validationResult =
+            ValidationResult validationResult =
                 await validator.ValidateAsync(
                     request,
                     cancellationToken);
@@ -63,7 +64,7 @@ public static class Login
 
             var email = request.Email.Trim();
 
-            var user =
+            ApplicationUser? user =
                 await userManager.FindByEmailAsync(email);
 
             if (user is null)
@@ -73,7 +74,7 @@ public static class Login
                     .InvalidCredentials;
             }
 
-            var signInResult =
+            SignInResult signInResult =
                 await signInManager.CheckPasswordSignInAsync(
                     user,
                     request.Password,
@@ -93,10 +94,10 @@ public static class Login
                     .InvalidCredentials;
             }
 
-            var roles =
+            IList<string> roles =
                 await userManager.GetRolesAsync(user);
 
-            var accessToken =
+            AccessTokenResult accessToken =
                 tokenService.CreateAccessToken(
                     user,
                     roles);
@@ -127,7 +128,7 @@ public static class Login
             await dbContext.SaveChangesAsync(
                 cancellationToken);
 
-            var response =
+            Response response =
                 IdentityMapper.ToAuthResponse<Response>(
                     accessToken,
                     refreshToken);

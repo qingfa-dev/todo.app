@@ -22,6 +22,17 @@ builder.Services.AddAuthorizationBuilder();
 
 builder.Services.AddCarter();
 
+builder.Services.AddCors(options =>
+{
+    options.AddDefaultPolicy(policy =>
+    {
+        policy
+            .AllowAnyOrigin()
+            .AllowAnyMethod()
+            .AllowAnyHeader();
+    });
+});
+
 builder.Services.AddValidatorsFromAssemblyContaining<
     Todo.Api.Features.Todos.TodoLists.CreateTodoList.Validator>();
 
@@ -49,7 +60,9 @@ if (app.Environment.IsDevelopment())
     await dbContext.Database.MigrateAsync();
 }
 
-app.UseHttpsRedirection();
+// app.UseHttpsRedirection();
+
+app.UseCors();
 
 app.UseAuthentication();
 app.UseAuthorization();

@@ -31,7 +31,7 @@ public static class QueryableExtensions
             .ToLowerInvariant();
 
         if (string.IsNullOrWhiteSpace(sortBy) ||
-            !sortMapping.TryGetValue(sortBy, out var keySelector))
+            !sortMapping.TryGetValue(sortBy, out Expression<Func<T, object>>? keySelector))
         {
             keySelector = defaultSort ?? (x => x!);
         }

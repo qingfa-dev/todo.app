@@ -1,4 +1,5 @@
 using FluentValidation;
+using FluentValidation.Results;
 
 using Microsoft.EntityFrameworkCore;
 
@@ -48,7 +49,7 @@ public static class Logout
             IValidator<Request> validator,
             CancellationToken cancellationToken)
         {
-            var validationResult =
+            ValidationResult validationResult =
                 await validator.ValidateAsync(
                     request,
                     cancellationToken);
@@ -65,7 +66,7 @@ public static class Logout
                 tokenService.HashRefreshToken(
                     request.RefreshToken);
 
-            var storedToken =
+            RefreshToken? storedToken =
                 await dbContext
                     .Set<RefreshToken>()
                     .SingleOrDefaultAsync(

@@ -20,7 +20,7 @@ public sealed class ResultConverterFactory : JsonConverterFactory
         if (typeToConvert.IsGenericType &&
             typeToConvert.GetGenericTypeDefinition() == typeof(PagedResult<>))
         {
-            var itemType = typeToConvert.GetGenericArguments()[0];
+            Type itemType = typeToConvert.GetGenericArguments()[0];
             return (JsonConverter)Activator.CreateInstance(
                 typeof(PagedResultJsonConverter<>).MakeGenericType(itemType))!;
         }

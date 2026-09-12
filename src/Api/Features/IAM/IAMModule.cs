@@ -9,6 +9,7 @@ using Todo.Api.Domain.IAM.Entities;
 using Todo.Api.Features.IAM.Services;
 using Todo.Api.SharedKernel.Data;
 using Todo.Api.SharedKernel.Extensions;
+using Todo.Api.SharedKernel.Models;
 
 namespace Todo.Api.Features.IAM;
 
@@ -25,7 +26,7 @@ public sealed class IAMModule : ICarterModule
                     IValidator<Register.Request> validator,
                     CancellationToken cancellationToken) =>
                 {
-                    var result =
+                    Result<Register.Response> result =
                         await Register.Handler.Handle(
                             request,
                             userManager,
@@ -49,7 +50,7 @@ public sealed class IAMModule : ICarterModule
                     IValidator<Login.Request> validator,
                     CancellationToken cancellationToken) =>
                 {
-                    var result =
+                    Result<Login.Response> result =
                         await Login.Handler.Handle(
                             request,
                             userManager,
@@ -76,7 +77,7 @@ public sealed class IAMModule : ICarterModule
                    IValidator<Refresh.Request> validator,
                    CancellationToken cancellationToken) =>
                {
-                   var result =
+                   Result<Refresh.Response> result =
                        await Refresh.Handler.Handle(
                            request,
                            dbContext,
@@ -100,7 +101,7 @@ public sealed class IAMModule : ICarterModule
                    IValidator<Logout.Request> validator,
                    CancellationToken cancellationToken) =>
                {
-                   var result =
+                   Result result =
                        await Logout.Handler.Handle(
                            request,
                            dbContext,

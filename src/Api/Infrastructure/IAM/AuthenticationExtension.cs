@@ -40,7 +40,7 @@ public static class TokenExtension
                 "JWT RefreshTokenDays must be greater than zero.")
             .ValidateOnStart();
 
-        var jwtOptions =
+        JwtOptions jwtOptions =
             builder.Configuration
                 .GetSection(JwtOptions.SectionName)
                 .Get<JwtOptions>()

@@ -1,4 +1,5 @@
 using FluentValidation;
+using FluentValidation.Results;
 
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
@@ -55,7 +56,7 @@ public static class Refresh
             IValidator<Request> validator,
             CancellationToken cancellationToken)
         {
-            var validationResult =
+            ValidationResult validationResult =
                 await validator.ValidateAsync(
                     request,
                     cancellationToken);
@@ -72,7 +73,7 @@ public static class Refresh
                 tokenService.HashRefreshToken(
                     request.RefreshToken);
 
-            var storedToken =
+            RefreshToken? storedToken =
                 await dbContext
                     .Set<RefreshToken>()
                     .SingleOrDefaultAsync(
@@ -100,7 +101,7 @@ public static class Refresh
                     .RefreshTokenInvalid;
             }
 
-            var user =
+            ApplicationUser? user =
                 await userManager.FindByIdAsync(
                     storedToken.UserId.ToString());
 
@@ -111,10 +112,10 @@ public static class Refresh
                     .RefreshTokenUserNotFound;
             }
 
-            var roles =
+            IList<string> roles =
                 await userManager.GetRolesAsync(user);
 
-            var newAccessToken =
+            AccessTokenResult newAccessToken =
                 tokenService.CreateAccessToken(
                     user,
                     roles);
@@ -126,7 +127,7 @@ public static class Refresh
                 tokenService.HashRefreshToken(
                     newRefreshToken);
 
-            var now = DateTime.UtcNow;
+            DateTime now = DateTime.UtcNow;
 
             storedToken.RevokedAtUtc = now;
             storedToken.ReplacedByTokenHash =
@@ -160,7 +161,7 @@ public static class Refresh
                     .RefreshTokenRevoked;
             }
 
-            var response =
+            Response response =
                 IdentityMapper.ToAuthResponse<Response>(
                     newAccessToken,
                     newRefreshToken);

@@ -7,9 +7,16 @@ IResourceBuilder<PostgresServerResource> postgres = builder
 IResourceBuilder<PostgresDatabaseResource> database = postgres
     .AddDatabase("PostgresConnection");
 
-builder
+IResourceBuilder<ProjectResource> api = builder
     .AddProject<Projects.Todo_Api>("api")
     .WithReference(database)
     .WaitFor(database);
+
+builder
+    .AddViteApp("web", "../Web", "dev")
+    .WithPnpm()
+    .WithReference(api)
+    .WaitFor(api)
+    .WithExternalHttpEndpoints();
 
 builder.Build().Run();

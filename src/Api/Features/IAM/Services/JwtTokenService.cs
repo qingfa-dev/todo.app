@@ -24,9 +24,9 @@ public sealed class JwtTokenService : IJwtTokenService
         ApplicationUser user,
         IEnumerable<string> roles)
     {
-        var now = DateTime.UtcNow;
+        DateTime now = DateTime.UtcNow;
 
-        var expiresAtUtc =
+        DateTime expiresAtUtc =
             now.AddMinutes(_options.AccessTokenMinutes);
 
         var claims = new List<Claim>
